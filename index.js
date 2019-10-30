@@ -1,74 +1,124 @@
 (function() {
 
-  glUtils.SL.init({ callback: function() { main(); }});
+  glUtils.SL.init({ callback: function() { main(); } });
+
   function main() {
     var canvas = document.getElementById("glcanvas");
     var gl = glUtils.checkWebGL(canvas);
+
+    // Inisialisasi shaders dan program
     var vertexShader = glUtils.getShader(gl, gl.VERTEX_SHADER, glUtils.SL.Shaders.v1.vertex);
     var fragmentShader = glUtils.getShader(gl, gl.FRAGMENT_SHADER, glUtils.SL.Shaders.v1.fragment);
+    var vertexShader2 = glUtils.getShader(gl, gl.VERTEX_SHADER, glUtils.SL.Shaders.v3.vertex);
+    var fragmentShader2 = glUtils.getShader(gl, gl.FRAGMENT_SHADER, glUtils.SL.Shaders.v3.fragment);
+    var vertexShaderCube = glUtils.getShader(gl, gl.VERTEX_SHADER, glUtils.SL.Shaders.v2.vertex);
+    var fragmentShaderCube = glUtils.getShader(gl, gl.FRAGMENT_SHADER, glUtils.SL.Shaders.v2.fragment);
+
     var program = glUtils.createProgram(gl, vertexShader, fragmentShader);
-    gl.useProgram(program);
-    
-    
+    var program2 = glUtils.createProgram(gl, vertexShader2, fragmentShader2);
+    var programCube = glUtils.createProgram(gl, vertexShaderCube, fragmentShaderCube);
 
-    // Mendefinisikan verteks-verteks
-    
-    var vertices = [
-      // x, y       r, g, b
-      //0.0, 0.5,     1.0, 1.0, 0.0,  // kuning
-      //0.5, -0.5,    0.0, 1.0, 1.0,  // cyan
-      //-0.5, -0.5,   1.0, 0.0, 1.0   // magenta
+    //For Triangles
+    var thetaLoc = gl.getUniformLocation(program, 'theta'); 
+    var transLoc = gl.getUniformLocation(program, 'vec');
+    var sizeLoc = gl.getUniformLocation(program, 'size');
+    var size = 0.2;
+    var thetaT = [30, 60, 0];
+    var vec = [0, 0, 0];
+    var vecX = 0.0067;
+    var vecY = 0.0076;
+    var vecZ = 0.011;
+    var nrp = 1.96;
 
-      //asal  di 0.0
-    // -0.2, +0.6,           0.88, 0.09, 0.57,
-    // +0.3, +0.9,           0.88, 0.09, 0.57,
-    // +0.25, +0.65,         0.88, 0.09, 0.57,
-    // +0.15, +0.58,         0.88, 0.09, 0.57,
-    // +0.02, -0.5,          0.88, 0.09, 0.57,
-    // -0.02, -0.59,         0.88, 0.09, 0.57,
-    // -0.43, -0.9,          0.88, 0.09, 0.57,
-    // -0.3, -0.05,          0.88, 0.09, 0.57,
-    // -0.05, +0.1,          0.88, 0.09, 0.57,
-    // -0.075, -0.07,        0.88, 0.09, 0.57,
-    // -0.03, -0.05,         0.88, 0.09, 0.57,
-    // -0.016, -0.01,        0.88, 0.09, 0.57,
-    // +0.05, +0.53,         0.88, 0.09, 0.57,
-    // -0.25, +0.35,         0.88, 0.09, 0.57,
+    // //For Lines
+    // var thetaLocL = gl.getUniformLocation(program2, 'theta'); 
+    // var transLocL = gl.getUniformLocation(program2, 'vec');
+    // var sizeLocL = gl.getUniformLocation(program2, 'size');
+    // var sizeL = 0.2;
+    // var thetaL = [30, 60, 0];
+    // var vec2 = [0, 0, 0];
+    // var vec2X = -0.006;
+    // var vec2Y = -0.009;
+    // var vec2Z = 0.021;
 
+  
+    //For Cube
+    var thetaLocCube = gl.getUniformLocation(programCube, 'theta');
+    var thetaCube = [30, 60, 0];
 
-      //digeser sejauh  -0.5
-    -0.7, +0.6,           0.88, 0.09, 0.57,
-    -0.2, +0.9,           0.88, 0.09, 0.57,
-    -0.25, +0.65,         0.88, 0.09, 0.57,
-    -0.35, +0.58,         0.88, 0.09, 0.57,
-    -0.48, -0.5,          0.88, 0.09, 0.57,
-    -0.52, -0.59,         0.88, 0.09, 0.57,
-    -0.93, -0.9,          0.88, 0.09, 0.57,
-    -0.8, -0.05,          0.88, 0.09, 0.57,
-    -0.55, +0.1,          0.88, 0.09, 0.57,
-    -0.575, -0.07,        0.88, 0.09, 0.57,
-    -0.53, -0.05,         0.88, 0.09, 0.57,
-    -0.516, -0.01,        0.88, 0.09, 0.57,
-    -0.45, +0.53,         0.88, 0.09, 0.57,
-    -0.75, +0.35,         0.88, 0.09, 0.57,
+    function cube(){
+      gl.useProgram(programCube);
 
+      // Definisi verteks dan buffer
 
-    //  triangle_strip
-    
-    // -0.3, 0.7,            0.88, 0.09, 0.57,
-    // -0.3, 0.5,            0.88, 0.09, 0.57,
-    // 0.0, +0.7,            0.88, 0.09, 0.57,
-    // -0.1, 0.5,            0.88, 0.09, 0.57,
-    // 0.0,  0.0,            0.88, 0.09, 0.57,
-    // -0.1, -0.3,           0.88, 0.09, 0.57,
-    // 0.0,  -0.4,           0.88, 0.09, 0.57,
-    // -0.2,  -0.5,          0.88, 0.09, 0.57,
-    // -0.2,  -0.75,         0.88, 0.09, 0.57,
-    // -0.35,  -0.4,         0.88, 0.09, 0.57,
-    // -0.3,  -0.3,          0.88, 0.09, 0.57
+      // Missing Lines : AD, DC, EF, DH
+      var cubeVertices = [
+        // x, y, z             r, g, b
 
-      // digeser sejaauh 0.5
+        //ABCD
+        -0.5, -0.5, 0.5,    1.0, 0.0, 0.0,    //A
+        -0.5, 0.5, 0.5,     0.0, 0.0, 0.0,    //B
+        -0.5, 0.5, 0.5,     1.0, 0.0, 0.0,    //B
+        0.5, 0.5, 0.5,      0.0, 0.0, 0.0,    //C
+        0.5, 0.5, 0.5,      1.0, 0.0, 0.0,    //C
+        0.5, -0.5, 0.5,     0.0, 0.0, 0.0,    //D
+        0.5, -0.5, 0.5,     1.0, 0.0, 0.0,    //D
+        -0.5, -0.5, 0.5,    1.0, 0.0, 0.0,    //A
+        
+        //DCGH
+        0.5, 0.5, 0.5,      1.0, 0.0, 0.0,    //C
+        0.5, 0.5, -0.5,     0.0, 0.0, 1.0,    //G
+        0.5, -0.5, 0.5,     1.0, 0.0, 1.0,    //D
+        0.5, -0.5, -0.5,    1.0, 0.0, 0.0,    //H
 
+        //ABFE
+        -0.5, -0.5, 0.5,    0.0, 0.0, 0.0,    //A
+        -0.5, -0.5, -0.5,   1.0, 1.0, 0.0,    //E
+        -0.5, 0.5, 0.5,     1.0, 1.0, 1.0,    //B
+        -0.5, 0.5, -0.5,    0.0, 1.0, 0.0,    //F
+
+        //EFGH
+        -0.5, -0.5, -0.5,   0.0, 0.0, 1.0,    //E
+        -0.5, 0.5, -0.5,    0.0, 1.0, 1.0,    //F
+        -0.5, 0.5, -0.5,    0.0, 0.0, 0.0,    //F
+        0.5, 0.5, -0.5,     0.0, 0.0, 1.0,    //G
+        0.5, 0.5, -0.5,     0.0, 0.0, 1.0,    //G
+        0.5, -0.5, -0.5,    0.0, 1.0, 1.0,    //H
+        0.5, -0.5, -0.5,    0.0, 1.0, 0.0,    //H
+        -0.5, -0.5, -0.5,   0.0, 0.0, 1.0,    //E
+
+      ];
+
+      var cubeVertexBufferObject = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexBufferObject);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(cubeVertices), gl.STATIC_DRAW);
+
+      var vPosition = gl.getAttribLocation(programCube, 'vPosition');
+      var vColor = gl.getAttribLocation(programCube, 'vColor');
+      gl.vertexAttribPointer(
+        vPosition,  // variabel yang memegang posisi attribute di shader
+        3,          // jumlah elemen per attribute
+        gl.FLOAT,   // tipe data atribut
+        gl.FALSE,
+        6 * Float32Array.BYTES_PER_ELEMENT, // ukuran byte tiap verteks 
+        0                                   // offset dari posisi elemen di array
+      );
+      gl.vertexAttribPointer(vColor, 3, gl.FLOAT, gl.FALSE, 
+        6 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
+
+      gl.enableVertexAttribArray(vPosition);
+      gl.enableVertexAttribArray(vColor);
+
+      gl.uniform3fv(thetaLocCube, thetaCube);
+    }
+
+    function triangle(){
+      gl.useProgram(program);
+
+      // Definisi vertex and buffer
+      var triangleVertices = [
+        //x,y         r,g,b
+        
     +0.2, 0.7,            0.88, 0.09, 0.57,
     +0.2, 0.5,            0.88, 0.09, 0.57,
     0.5, +0.7,            0.88, 0.09, 0.57,
@@ -80,74 +130,154 @@
     +0.3,  -0.75,         0.88, 0.09, 0.57,
     +0.15,  -0.4,         0.88, 0.09, 0.57,
     +0.2,  -0.3,          0.88, 0.09, 0.57
+];
 
+      var triangleVertexBufferObject = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexBufferObject);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(triangleVertices), gl.STATIC_DRAW);
 
+      var vPosition = gl.getAttribLocation(program, 'vPosition');
+      var vColor = gl.getAttribLocation(program, 'vColor');
 
-      //x   //y
-      ];
+      gl.vertexAttribPointer(
+        vPosition, 2, gl.FLOAT, gl.FALSE, 5 * Float32Array.BYTES_PER_ELEMENT, 0
+      );
+      gl.vertexAttribPointer(
+        vColor, 3, gl.FLOAT, gl.FALSE, 5 * Float32Array.BYTES_PER_ELEMENT, 2 * Float32Array.BYTES_PER_ELEMENT
+      );
 
-    // Membuat vertex buffer object (CPU Memory <==> GPU Memory)
-    var vertexBufferObject = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBufferObject);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+      gl.uniform1f(sizeLoc, size);
 
-    // Membuat sambungan untuk attribute
-    var vPosition = gl.getAttribLocation(program, 'vPosition');
-    var vColor = gl.getAttribLocation(program, 'vColor');
-    gl.vertexAttribPointer(
-      vPosition,    // variabel yang memegang posisi attribute di shader
-      2,            // jumlah elemen per atribut
-      gl.FLOAT,     // tipe data atribut
-      gl.FALSE, 
-      5 * Float32Array.BYTES_PER_ELEMENT, // ukuran byte tiap verteks (overall) 
-      0                                   // offset dari posisi elemen di array
-    );
-    gl.vertexAttribPointer(vColor, 3, gl.FLOAT, gl.FALSE,
-      5 * Float32Array.BYTES_PER_ELEMENT, 2 * Float32Array.BYTES_PER_ELEMENT);
-    gl.enableVertexAttribArray(vPosition);
-    gl.enableVertexAttribArray(vColor);
+      //Hit the Wall
 
-    //membuat sambungan untuk uniform
-    var thetaUniformLocation = gl.getUniformLocation(program, 'theta');
-    var theta = 0; 
-    var scaleXUniformLocation = gl.getUniformLocation(program, 'scaleX');
-    var scaleX = 1.0; 
-    var scaleYUniformLocation = gl.getUniformLocation(program, 'scaleY');
-  
-    var translationLoc = gl.getUniformLocation(program, 'translasi');   
-    var flag=1.0;
+      if(vec[0] > 0.5*(1-size) || vec[0] < -0.5*(1-size) ){
+        vecX = vecX * -1;
+      }
+      vec[0] += vecX;
 
-    function render()
-    {
-      
-      if(scaleX >= 1.0) flag = -1.0;
-      else if(scaleX <= -1.0) flag = 1.0;
-      scaleX += 0.0196 * flag;
-      theta += 0.0196;
-      
-      // biar ga gerak
-      // scaleX += 0 * melebar;
-      // theta += 0;
-      
-      gl.uniform1f(translationLoc,0.0);
-      gl.uniform1f(thetaUniformLocation,0.0);
-      gl.uniform1f(scaleXUniformLocation,scaleX);
-      gl.uniform1f(scaleYUniformLocation,1.0);
-      
+      if(vec[1] > 0.5*(1-size) || vec[1] < -0.5*(1-size) ){
+        vecY = vecY * -1;
+      }
+      vec[1] += vecY;
+
+      if(vec[2] > 0.5*(1-size) || vec[2] < -0.5*(1-size) ){
+        vecZ = vecZ * -1;
+      }
+      vec[2] += vecZ;
+
+      gl.uniform3fv(transLoc, vec);
+
+      // gl.enableVertexAttribArray(vPosition);
+      // gl.enableVertexAttribArray(vColor);
+
+      //Y Rotation
+
+      thetaT[1] += ( nrp * 3 );
+
+      gl.uniform3fv(thetaLoc, thetaT);
+    }
+
+    // function lines(){
+    //   gl.useProgram(program2);
+
+    //   var lineVertices = [
+    //     //x,y         r,g,b
+    //     -0.3, -0.7,   0.1,1.0,0.6,
+    //     0.0, 0.5,     1.0,1.0,0.0,
+
+    //     -0.2, -0.7,   0.1,1.0,0.6,
+    //     -0.155, -0.5, 0.1,1.0,0.6,
+
+    //     -0.12, -0.35, 0.1,1.0,0.6,
+    //     0.0, 0.2,     0.1,1.0,0.6,
+
+    //     -0.3, -0.7,   0.1,1.0,0.6,
+    //     -0.2, -0.7,   0.1,1.0,0.6,
+
+    //     0.0, -0.5,    0.1,1.0,0.6,
+    //     -0.155, -0.5, 0.1,1.0,0.6,
+
+    //     0.0, -0.35,   0.1,1.0,0.6,
+    //     -0.12, -0.35, 0.1,1.0,0.6,
+
+    //     0.0, 0.5,     0.1,1.0,0.6,
+    //     0.0, -0.7,    0.1,1.0,0.6,
+
+    //     0.0, -0.7,    0.1,1.0,0.6,
+    //     0.1, -0.7,    0.1,1.0,0.6,
+
+    //     0.0, 0.5,     1.0,1.0,0.6,
+    //     0.1, 0.5,     0.1,1.0,0.6,
+
+    //     0.1, -0.7,    0.1,1.0,0.6,
+    //     0.1, 0.5,     0.1,1.0,0.6
+    //   ];
+
+    //   var lineVertexBufferObject = gl.createBuffer();
+    //   gl.bindBuffer(gl.ARRAY_BUFFER, lineVertexBufferObject);
+    //   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(lineVertices), gl.STATIC_DRAW);
+
+    //   var vPosition = gl.getAttribLocation(program2, 'vPosition');
+    //   var vColor = gl.getAttribLocation(program2, 'vColor');
+
+    //   gl.vertexAttribPointer(
+    //     vPosition, 2, gl.FLOAT, gl.FALSE, 5 * Float32Array.BYTES_PER_ELEMENT, 0
+    //   );
+    //   gl.vertexAttribPointer(
+    //     vColor, 3, gl.FLOAT, gl.FALSE, 5 * Float32Array.BYTES_PER_ELEMENT, 2 * Float32Array.BYTES_PER_ELEMENT
+    //   );
+    
+    //   gl.uniform1f(sizeLocL, sizeL);
+
+    //   //Hit the Wall
+
+    //   if(vec2[0] > 0.5*(1-sizeL) || vec2[0] < -0.5*(1-sizeL) ){
+    //     vec2X = vec2X * -1;
+    //   }
+    //   vec2[0] += vec2X;
+
+    //   if(vec2[1] > 0.5*(1-sizeL) || vec2[1] < -0.5*(1-sizeL) ){
+    //     vec2Y = vec2Y * -1;
+    //   }
+    //   vec2[1] += vec2Y;
+
+    //   if(vec2[2] > 0.5*(1-sizeL) || vec2[2] < -0.5*(1-sizeL) ){
+    //     vec2Z = vec2Z * -1;
+    //   }
+    //   vec2[2] += vec2Z;
+
+    //   gl.uniform3fv(transLocL, vec2);
+
+    //   // gl.enableVertexAttribArray(vPosition);
+    //   // gl.enableVertexAttribArray(vColor);
+
+    //   //Y Rotation
+
+    //   thetaL[1] += ( nrp * 3 );
+
+    //   gl.uniform3fv(thetaLocL, thetaL);
+    // }
+
+    function render() {
+      // Bersihkan layar jadi hitam
       gl.clearColor(0.0, 0.0, 0.0, 1.0);
-      gl.clear(gl.COLOR_BUFFER_BIT);
-      //gl.drawArrays(gl.TRIANGLES, 16, 15);
-      gl.uniform1f(translationLoc,-0.5);
-      gl.drawArrays(gl.TRIANGLE_STRIP, 14, 11);
+      gl.enable(gl.DEPTH_TEST);
       
-      gl.uniform1f(thetaUniformLocation,theta);
-      gl.uniform1f(scaleXUniformLocation,1.0);
-      gl.uniform1f(scaleYUniformLocation,1.0);
-      gl.uniform1f(translationLoc,0.5);
-      gl.drawArrays(gl.LINE_LOOP, 0, 14);
+      // Bersihkan buffernya canvas
+      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+      
+      triangle();
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 11);
+
+      // lines();
+      // gl.drawArrays(gl.LINES, 0, 20);
+
+      cube();
+      gl.drawArrays(gl.LINES, 0, 24);
 
       requestAnimationFrame(render);
     }
+    
     render();
   }
 })();
