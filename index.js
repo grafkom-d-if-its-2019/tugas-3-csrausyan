@@ -25,22 +25,10 @@
     var size = 0.2;
     var thetaT = [30, 60, 0];
     var vec = [0, 0, 0];
-    var vecX = 0.0067;
-    var vecY = 0.0076;
-    var vecZ = 0.011;
+    var vecX = 0.0196;
+    var vecY = 0.0069;
+    var vecZ = 0.016;
     var nrp = 1.96;
-
-    // //For Lines
-    // var thetaLocL = gl.getUniformLocation(program2, 'theta'); 
-    // var transLocL = gl.getUniformLocation(program2, 'vec');
-    // var sizeLocL = gl.getUniformLocation(program2, 'size');
-    // var sizeL = 0.2;
-    // var thetaL = [30, 60, 0];
-    // var vec2 = [0, 0, 0];
-    // var vec2X = -0.006;
-    // var vec2Y = -0.009;
-    // var vec2Z = 0.021;
-
   
     //For Cube
     var thetaLocCube = gl.getUniformLocation(programCube, 'theta');
@@ -176,87 +164,6 @@
 
       gl.uniform3fv(thetaLoc, thetaT);
     }
-
-    // function lines(){
-    //   gl.useProgram(program2);
-
-    //   var lineVertices = [
-    //     //x,y         r,g,b
-    //     -0.3, -0.7,   0.1,1.0,0.6,
-    //     0.0, 0.5,     1.0,1.0,0.0,
-
-    //     -0.2, -0.7,   0.1,1.0,0.6,
-    //     -0.155, -0.5, 0.1,1.0,0.6,
-
-    //     -0.12, -0.35, 0.1,1.0,0.6,
-    //     0.0, 0.2,     0.1,1.0,0.6,
-
-    //     -0.3, -0.7,   0.1,1.0,0.6,
-    //     -0.2, -0.7,   0.1,1.0,0.6,
-
-    //     0.0, -0.5,    0.1,1.0,0.6,
-    //     -0.155, -0.5, 0.1,1.0,0.6,
-
-    //     0.0, -0.35,   0.1,1.0,0.6,
-    //     -0.12, -0.35, 0.1,1.0,0.6,
-
-    //     0.0, 0.5,     0.1,1.0,0.6,
-    //     0.0, -0.7,    0.1,1.0,0.6,
-
-    //     0.0, -0.7,    0.1,1.0,0.6,
-    //     0.1, -0.7,    0.1,1.0,0.6,
-
-    //     0.0, 0.5,     1.0,1.0,0.6,
-    //     0.1, 0.5,     0.1,1.0,0.6,
-
-    //     0.1, -0.7,    0.1,1.0,0.6,
-    //     0.1, 0.5,     0.1,1.0,0.6
-    //   ];
-
-    //   var lineVertexBufferObject = gl.createBuffer();
-    //   gl.bindBuffer(gl.ARRAY_BUFFER, lineVertexBufferObject);
-    //   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(lineVertices), gl.STATIC_DRAW);
-
-    //   var vPosition = gl.getAttribLocation(program2, 'vPosition');
-    //   var vColor = gl.getAttribLocation(program2, 'vColor');
-
-    //   gl.vertexAttribPointer(
-    //     vPosition, 2, gl.FLOAT, gl.FALSE, 5 * Float32Array.BYTES_PER_ELEMENT, 0
-    //   );
-    //   gl.vertexAttribPointer(
-    //     vColor, 3, gl.FLOAT, gl.FALSE, 5 * Float32Array.BYTES_PER_ELEMENT, 2 * Float32Array.BYTES_PER_ELEMENT
-    //   );
-    
-    //   gl.uniform1f(sizeLocL, sizeL);
-
-    //   //Hit the Wall
-
-    //   if(vec2[0] > 0.5*(1-sizeL) || vec2[0] < -0.5*(1-sizeL) ){
-    //     vec2X = vec2X * -1;
-    //   }
-    //   vec2[0] += vec2X;
-
-    //   if(vec2[1] > 0.5*(1-sizeL) || vec2[1] < -0.5*(1-sizeL) ){
-    //     vec2Y = vec2Y * -1;
-    //   }
-    //   vec2[1] += vec2Y;
-
-    //   if(vec2[2] > 0.5*(1-sizeL) || vec2[2] < -0.5*(1-sizeL) ){
-    //     vec2Z = vec2Z * -1;
-    //   }
-    //   vec2[2] += vec2Z;
-
-    //   gl.uniform3fv(transLocL, vec2);
-
-    //   // gl.enableVertexAttribArray(vPosition);
-    //   // gl.enableVertexAttribArray(vColor);
-
-    //   //Y Rotation
-
-    //   thetaL[1] += ( nrp * 3 );
-
-    //   gl.uniform3fv(thetaLocL, thetaL);
-    // }
 
     function render() {
       // Bersihkan layar jadi hitam
